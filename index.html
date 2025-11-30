@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>DashCam.Ja- Evidence is Everything</title>
+    <title>DashGuard - Professional Dash Cameras</title>
     <link rel="stylesheet" href="DashCam.css">
 </head>
 <body>
@@ -15,107 +15,42 @@
             <li><a href="#about">About</a></li>
             <li><a href="#contact">Contact</a></li>
             <?php if (isset($_SESSION["user_id"])): ?>
-                <li><a href="DashCam.php">Dashboard</a></li>
-                <li><a href="?logout=true">Logout <?php echo htmlspecialchars($_SESSION["user_email"]); ?></a></li>
+                <li><a href="dashboard.php">Dashboard</a></li>
+                <li><a href="?logout=true">Logout (<?php echo htmlspecialchars($_SESSION["user_email"]); ?>)</a></li>
             <?php else: ?>
                 <li><a href="#login">Login</a></li>
-                <li><a href="?signup=true">Sign Up</a></li>
             <?php endif; ?>
         </ul>
     </nav>
 
-    <!-- Login & Sign Up Section -->
+    <!-- Login Section -->
     <?php if (!isset($_SESSION["user_id"])): ?>
     <section class="login-section" id="login">
-        <div class="auth-containers">
-            <!-- Login Section -->
-            <div class="login-container <?php echo $show_signup ? 'hidden' : ''; ?>" id="login-form">
-                <h1>DashCam.Ja</h1>
-                <p>Welcome Back</p>
-                
-                <?php if (!empty($login_error)): ?>
-                    <div class="error-message"><?php echo $login_error; ?></div>
-                <?php endif; ?>
+        <div class="login-container">
+            <h1>DashGuard</h1>
+            <p>Welcome Back</p>
+            
+            <?php if (!empty($login_error)): ?>
+                <div class="error-message"><?php echo $login_error; ?></div>
+            <?php endif; ?>
 
-                <form method="POST">
-                    <div class="form-group">
-                        <label for="email">Email Address</label>
-                        <input type="email" id="email" name="email" placeholder="your@email.com" required>
-                    </div>
-                    <div class="form-group">
-                        <label for="password">Password</label>
-                        <input type="password" id="password" name="password" placeholder="••••••••" required>
-                    </div>
-                    <button type="submit" name="login" class="login-btn">Sign In</button>
-                    <div class="forgot-password">
-                        <a href="#">Forgot your password?</a>
-                    </div>
-                </form>
-                <div class="signup-link">
-                    <p>Don't have an account? <a href="?signup=true">Sign up here</a></p>
+            <form method="POST">
+                <div class="form-group">
+                    <label for="email">Email Address</label>
+                    <input type="email" id="email" name="email" placeholder="your@email.com" required>
                 </div>
-            </div>
-
-            <!-- Sign Up Section -->
-            <div class="login-container <?php echo $show_signup ? '' : 'hidden'; ?>" id="signup-form">
-                <h1>DashCam.Ja</h1>
-                <p>Create Your Account</p>
-                
-                <?php if (!empty($register_error)): ?>
-                    <div class="error-message"><?php echo $register_error; ?></div>
-                <?php endif; ?>
-
-                <?php if (!empty($register_success)): ?>
-                    <div class="success-message"><?php echo $register_success; ?></div>
-                <?php endif; ?>
-
-                <form method="POST">
-                    <div class="form-group">
-                        <label for="name">Full Name</label>
-                        <input type="text" id="name" name="name" placeholder="John Doe" required>
-                    </div>
-                    <div class="form-group">
-                        <label for="email-signup">Email Address</label>
-                        <input type="email" id="email-signup" name="email" placeholder="your@email.com" required>
-                    </div>
-                    <div class="form-group">
-                        <label for="password-signup">Password</label>
-                        <input type="password" id="password-signup" name="password" placeholder="••••••••" required>
-                    </div>
-                    <div class="form-group">
-                        <label for="confirm_password">Confirm Password</label>
-                        <input type="password" id="confirm_password" name="confirm_password" placeholder="••••••••" required>
-                    </div>
-                    <button type="submit" name="register" class="login-btn">Create Account</button>
-                </form>
-                <div class="signup-link">
-                    <p>Already have an account? <a href="?signup=false">Login here</a></p>
+                <div class="form-group">
+                    <label for="password">Password</label>
+                    <input type="password" id="password" name="password" placeholder="••••••••" required>
                 </div>
-            </div>
+                <button type="submit" name="login" class="login-btn">Sign In</button>
+                <div class="forgot-password">
+                    <a href="#">Forgot your password?</a>
+                </div>
+            </form>
         </div>
     </section>
     <?php endif; ?>
-
-    <script>
-        // Toggle between login and signup forms
-        document.addEventListener('DOMContentLoaded', function() {
-            const urlParams = new URLSearchParams(window.location.search);
-            const isSignup = urlParams.get('signup') === 'true';
-            
-            const loginForm = document.getElementById('login-form');
-            const signupForm = document.getElementById('signup-form');
-            
-            if (loginForm && signupForm) {
-                if (isSignup) {
-                    loginForm.classList.add('hidden');
-                    signupForm.classList.remove('hidden');
-                } else {
-                    loginForm.classList.remove('hidden');
-                    signupForm.classList.add('hidden');
-                }
-            }
-        });
-    </script>
 
     <!-- Hero Section -->
     <section class="hero" id="home">
@@ -128,52 +63,32 @@
     <section class="products" id="products">
         <h2>Our Products</h2>
         <div class="product-grid">
-            <div class="product-card">
-                <div class="product-image">📷</div>
-                <div class="product-info">
-                    <h3>3 Channel Dash Cam</h3>
-                    <p>Advanced three-camera system with front, interior, and rear view monitoring. Capturing a complete footage from all angles for maximum safety and security on the road.</p>
+            <?php if (count($products) > 0): ?>
+                <?php foreach ($products as $product): ?>
+                <div class="product-card">
+                    <div class="product-image"><?php echo htmlspecialchars($product["icon"]); ?></div>
+                    <div class="product-info">
+                        <h3><?php echo htmlspecialchars($product["name"]); ?></h3>
+                        <p><?php echo htmlspecialchars($product["description"]); ?></p>
+                        <div class="price">$<?php echo htmlspecialchars($product["price"]); ?></div>
+                        <form method="POST">
+                            <input type="hidden" name="product_id" value="<?php echo $product["id"]; ?>">
+                            <input type="hidden" name="quantity" value="1">
+                            <button type="submit" name="add_to_cart" class="cta-btn">Add to Cart</button>
+                        </form>
+                    </div>
                 </div>
-            </div>
-
-            <div class="product-card">
-                <div class="product-image">📹</div>
-                <div class="product-info">
-                    <h3>Dual Camera with Rear View Backup</h3>
-                    <p>Front and rear dual camera system with combined backup rear view. Perfect for monitoring both forward driving and rear traffic.</p>
-                </div>
-            </div>
-
-            <div class="product-card">
-                <div class="product-image">🎥</div>
-                <div class="product-info">
-                    <h3>Dual Camera without Rear View Backup</h3>
-                    <p>Essential dual camera setup with front and interior monitoring. Ideal for capturing driver and passenger activity while maintaining clear front-of-vehicle recording.</p>
-                </div>
-            </div>
-
-            <div class="product-card">
-                <div class="product-image">🚗</div>
-                <div class="product-info">
-                    <h3>2 Channel Dash Cam</h3>
-                    <p>Reliable two-channel system with front and cabin monitoring. Great for ride-sharing and business vehicles, providing dual-angle recording for complete protection.</p>
-                </div>
-            </div>
-
-            <div class="product-card">
-                <div class="product-image">📸</div>
-                <div class="product-info">
-                    <h3>Single Channel Dash Cam</h3>
-                    <p>Professional single-camera unit focused on front-of-vehicle recording. Mini and affordable solution for personal vehicles, featuring crystal-clear 1080p to 4K recording capabilities.</p>
-                </div>
-            </div>
+                <?php endforeach; ?>
+            <?php else: ?>
+                <p>No products available at the moment.</p>
+            <?php endif; ?>
         </div>
     </section>
 
     <!-- Footer -->
     <footer id="contact">
-        <p>&copy; 2022 DashCam.Ja - Evidence is Everything. All rights reserved.</p>
-        <p>Contact: DashcamJa@gmail.com | Phone:+1-876-882-7876</p>
+        <p>&copy; 2024 DashGuard - Professional Dash Cameras. All rights reserved.</p>
+        <p>Contact: info@dashguard.com | Phone: 1-800-DASHCAM</p>
     </footer>
 </body>
 </html>
