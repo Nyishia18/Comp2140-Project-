@@ -2,10 +2,6 @@
 /**
  * Database Migration Script
  * Creates all required tables for the DashCam.Ja application
- * 
- * Run this script once to set up the database schema.
- * Can be executed via command line: php migrate.php
- * Or via browser: http://your-domain/migrate.php
  */
 
 require_once __DIR__ . '/config.php';
@@ -85,25 +81,45 @@ $sql = "
     );
 ";
 
+echo "<h2 style='font-family: Arial;'>Running Migration...</h2>";
+echo "<div style='font-family: Consolas, monospace; padding: 10px; background: #f8f8f8; border: 1px solid #ddd;'>";
+
+$successCount = 0;
+$failCount = 0;
+
 if ($conn->multi_query($sql)) {
+
     do {
+        if ($conn->errno) {
+            echo "<p style='color: red;'>❌ Error: " . $conn->error . "</p>";
+            $failCount++;
+        } else {
+            echo "<p style='color: green;'>✔ Query executed successfully.</p>";
+            $successCount++;
+        }
+
         if ($result = $conn->store_result()) {
             $result->free();
         }
+
     } while ($conn->next_result());
 
-    if ($conn->errno) {
-        echo "Migration error: " . $conn->error;
-        $conn->close();
-        exit(1);
+    echo "<hr>";
+    echo "<h3>Migration Summary</h3>";
+    echo "<p><strong>Successful queries:</strong> $successCount</p>";
+    echo "<p><strong>Failed queries:</strong> $failCount</p>";
+
+    if ($failCount === 0) {
+        echo "<h2 style='color: green;'>🎉 Migration completed successfully!</h2>";
     } else {
-        echo "Migration successful";
+        echo "<h2 style='color: red;'>⚠️ Migration completed with errors.</h2>";
     }
+
 } else {
-    // Handle multi_query() failure
-    echo "Migration error: Failed to execute migration queries. " . $conn->error;
-    $conn->close();
-    exit(1);
+    echo "<p style='color: red;'>❌ Migration failed: " . $conn->error . "</p>";
 }
 
+echo "</div>";
+
 $conn->close();
+?>
